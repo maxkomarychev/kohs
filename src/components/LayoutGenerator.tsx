@@ -45,6 +45,28 @@ const LayoutGenerator: React.FC = () => {
     setMatrices(matrices.filter((_, i) => i !== index));
   };
 
+  const handleCellClick = (row: number, col: number) => {
+    // Ensure matrix has the correct number of rows
+    let rows = matrixInput.split('\n');
+    while (rows.length < gridSize) {
+      rows.push('0'.repeat(gridSize));
+    }
+
+    // Ensure each row has the correct number of columns
+    rows = rows.map(row => {
+      while (row.length < gridSize) {
+        row += '0';
+      }
+      return row;
+    });
+
+    const newRows = [...rows];
+    const currentValue = parseInt(newRows[row][col]) || 0;
+    const newValue = ((currentValue + 1) % 6).toString();
+    newRows[row] = newRows[row].substring(0, col) + newValue + newRows[row].substring(col + 1);
+    setMatrixInput(newRows.join('\n'));
+  };
+
   const renderGrid = (matrix: string) => {
     const grid = [];
     const rows = matrix.trim().split('\n');
@@ -58,6 +80,8 @@ const LayoutGenerator: React.FC = () => {
           <div
             key={`${x}-${y}`}
             style={{ width: '5rem', height: '5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={() => handleCellClick(y, x)}
+            className="cursor-pointer hover:bg-gray-100"
           >
             <div style={{ position: 'relative' }}>
               <Shape type={type} size={80} />
