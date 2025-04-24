@@ -12,15 +12,33 @@ const LayoutGenerator: React.FC = () => {
   const [matrices, setMatrices] = useState<string[]>([]);
   const gridSize = 3;
 
+  const generateRandomMatrix = (): string => {
+    const rows = [];
+    for (let i = 0; i < gridSize; i++) {
+      const row = [];
+      for (let j = 0; j < gridSize; j++) {
+        row.push(Math.floor(Math.random() * 6).toString());
+      }
+      rows.push(row.join(''));
+    }
+    return rows.join('\n');
+  };
+
+  const handleGenerateRandom = () => {
+    const newMatrices: string[] = [];
+    for (let i = 0; i < 25; i++) {
+      newMatrices.push(generateRandomMatrix());
+    }
+    setMatrices(newMatrices);
+  };
+
   const handleMatrixInput = (input: string) => {
     setMatrixInput(input);
   };
 
   const handleAddMatrix = () => {
-    if (matrices.length < 6) {
-      setMatrices([...matrices, matrixInput]);
-      setMatrixInput(''); // Clear the textarea completely
-    }
+    setMatrices([...matrices, matrixInput]);
+    setMatrixInput(''); // Clear the textarea completely
   };
 
   const handleRemoveMatrix = (index: number) => {
@@ -174,13 +192,24 @@ const LayoutGenerator: React.FC = () => {
                 color: 'white',
                 borderRadius: '0.25rem',
                 border: 'none',
-                cursor: matrices.length >= 6 ? 'not-allowed' : 'pointer',
-                opacity: matrices.length >= 6 ? 0.5 : 1
+                cursor: 'pointer'
               }}
               onClick={handleAddMatrix}
-              disabled={matrices.length >= 6}
             >
-              Add Matrix ({matrices.length}/6)
+              Add Matrix ({matrices.length})
+            </button>
+            <button
+              style={{
+                padding: '0.25rem 0.75rem',
+                backgroundColor: '#8b5cf6',
+                color: 'white',
+                borderRadius: '0.25rem',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onClick={handleGenerateRandom}
+            >
+              Generate Random (25)
             </button>
             {matrices.length > 0 && (
               <button
