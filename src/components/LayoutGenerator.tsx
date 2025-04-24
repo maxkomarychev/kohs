@@ -74,7 +74,7 @@ const LayoutGenerator: React.FC = () => {
         grid.push(
           <div
             key={`${x}-${y}`}
-            className="border border-gray-200 w-20 h-20 flex items-center justify-center cursor-pointer hover:bg-gray-100"
+            className="w-20 h-20 flex items-center justify-center cursor-pointer hover:bg-gray-100"
             onClick={() => handleAddShape(x, y)}
           >
             {layout.map(item => {
@@ -84,7 +84,7 @@ const LayoutGenerator: React.FC = () => {
                     key={item.id}
                     className="relative"
                   >
-                    <Shape type={item.type} size={70} />
+                    <Shape type={item.type} size={78} />
                   </div>
                 );
               }
