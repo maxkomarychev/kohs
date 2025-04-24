@@ -2,9 +2,13 @@
 
 import React from 'react';
 
-type ShapeType = 'white' | 'black' | 
-  'white-black-top-left' | 'white-black-top-right' | 
-  'white-black-bottom-left' | 'white-black-bottom-right';
+// 0: white
+// 5: black
+// 1: white-black-north-west (top-left)
+// 2: white-black-north-east (top-right)
+// 3: white-black-south-east (bottom-right)
+// 4: white-black-south-west (bottom-left)
+type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 
 interface ShapeProps {
   type: ShapeType;
@@ -35,28 +39,28 @@ const Shape: React.FC<ShapeProps> = ({ type, size = 50, className = '' }) => {
 
   const renderShape = () => {
     switch (type) {
-      case 'white':
+      case 0:
         return (
           <div
             className={`bg-white border border-gray-300 ${className}`}
             style={baseStyle}
           />
         );
-      case 'black':
+      case 5:
         return (
           <div
             className={`bg-black ${className}`}
             style={baseStyle}
           />
         );
-      case 'white-black-top-left':
+      case 1:
         return renderDiagonal('white', 'black', 'polygon(0% 0%, 100% 0%, 0% 100%)');
-      case 'white-black-top-right':
+      case 2:
         return renderDiagonal('white', 'black', 'polygon(0% 0%, 100% 0%, 100% 100%)');
-      case 'white-black-bottom-left':
-        return renderDiagonal('white', 'black', 'polygon(0% 0%, 0% 100%, 100% 100%)');
-      case 'white-black-bottom-right':
+      case 3:
         return renderDiagonal('white', 'black', 'polygon(100% 0%, 0% 100%, 100% 100%)');
+      case 4:
+        return renderDiagonal('white', 'black', 'polygon(0% 0%, 0% 100%, 100% 100%)');
       default:
         return null;
     }

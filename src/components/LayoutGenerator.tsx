@@ -3,9 +3,7 @@
 import React, { useState } from 'react';
 import Shape from './Shape';
 
-type ShapeType = 'white' | 'black' | 
-  'white-black-top-left' | 'white-black-top-right' | 
-  'white-black-bottom-left' | 'white-black-bottom-right';
+type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 
 interface LayoutItem {
   id: string;
@@ -16,8 +14,31 @@ interface LayoutItem {
 
 const LayoutGenerator: React.FC = () => {
   const [layout, setLayout] = useState<LayoutItem[]>([]);
-  const [selectedShape, setSelectedShape] = useState<ShapeType>('white');
-  const gridSize = 3; // 3x3 grid
+  const [selectedShape, setSelectedShape] = useState<ShapeType>(0);
+  const [matrixInput, setMatrixInput] = useState<string>('000\n000\n000');
+  const gridSize = 3;
+
+  const handleMatrixInput = (input: string) => {
+    setMatrixInput(input);
+    const rows = input.trim().split('\n');
+    const newLayout: LayoutItem[] = [];
+    
+    rows.forEach((row, y) => {
+      row.split('').forEach((cell, x) => {
+        const type = parseInt(cell) as ShapeType;
+        if (!isNaN(type) && type >= 0 && type <= 5) {
+          newLayout.push({
+            id: `${x}-${y}`,
+            type,
+            x,
+            y,
+          });
+        }
+      });
+    });
+    
+    setLayout(newLayout);
+  };
 
   const handleAddShape = (x: number, y: number) => {
     const newShape: LayoutItem = {
@@ -26,11 +47,19 @@ const LayoutGenerator: React.FC = () => {
       x,
       y,
     };
-    setLayout([...layout, newShape]);
-  };
-
-  const handleRemoveShape = (id: string) => {
-    setLayout(layout.filter(item => item.id !== id));
+    setLayout([...layout.filter(item => !(item.x === x && item.y === y)), newShape]);
+    
+    // Update matrix input
+    const rows = matrixInput.split('\n');
+    const newRows = rows.map((row, rowY) => {
+      if (rowY === y) {
+        const cells = row.split('');
+        cells[x] = selectedShape.toString();
+        return cells.join('');
+      }
+      return row;
+    });
+    setMatrixInput(newRows.join('\n'));
   };
 
   const renderGrid = () => {
@@ -49,10 +78,6 @@ const LayoutGenerator: React.FC = () => {
                   <div
                     key={item.id}
                     className="relative"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveShape(item.id);
-                    }}
                   >
                     <Shape type={item.type} size={70} />
                   </div>
@@ -74,52 +99,64 @@ const LayoutGenerator: React.FC = () => {
         <div className="flex flex-wrap gap-2 mb-4">
           <button
             className={`px-3 py-1 rounded ${
-              selectedShape === 'white' ? 'bg-gray-200' : 'bg-white'
+              selectedShape === 0 ? 'bg-gray-200' : 'bg-white'
             }`}
-            onClick={() => setSelectedShape('white')}
+            onClick={() => setSelectedShape(0)}
           >
-            White
+            0 (White)
           </button>
           <button
             className={`px-3 py-1 rounded ${
-              selectedShape === 'black' ? 'bg-gray-200' : 'bg-white'
+              selectedShape === 5 ? 'bg-gray-200' : 'bg-white'
             }`}
-            onClick={() => setSelectedShape('black')}
+            onClick={() => setSelectedShape(5)}
           >
-            Black
+            5 (Black)
           </button>
           <button
             className={`px-3 py-1 rounded ${
-              selectedShape === 'white-black-top-left' ? 'bg-gray-200' : 'bg-white'
+              selectedShape === 1 ? 'bg-gray-200' : 'bg-white'
             }`}
-            onClick={() => setSelectedShape('white-black-top-left')}
+            onClick={() => setSelectedShape(1)}
           >
-            W/B TL
+            1 (NW)
           </button>
           <button
             className={`px-3 py-1 rounded ${
-              selectedShape === 'white-black-top-right' ? 'bg-gray-200' : 'bg-white'
+              selectedShape === 2 ? 'bg-gray-200' : 'bg-white'
             }`}
-            onClick={() => setSelectedShape('white-black-top-right')}
+            onClick={() => setSelectedShape(2)}
           >
-            W/B TR
+            2 (NE)
           </button>
           <button
             className={`px-3 py-1 rounded ${
-              selectedShape === 'white-black-bottom-left' ? 'bg-gray-200' : 'bg-white'
+              selectedShape === 3 ? 'bg-gray-200' : 'bg-white'
             }`}
-            onClick={() => setSelectedShape('white-black-bottom-left')}
+            onClick={() => setSelectedShape(3)}
           >
-            W/B BL
+            3 (SE)
           </button>
           <button
             className={`px-3 py-1 rounded ${
-              selectedShape === 'white-black-bottom-right' ? 'bg-gray-200' : 'bg-white'
+              selectedShape === 4 ? 'bg-gray-200' : 'bg-white'
             }`}
-            onClick={() => setSelectedShape('white-black-bottom-right')}
+            onClick={() => setSelectedShape(4)}
           >
-            W/B BR
+            4 (SW)
           </button>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Matrix Input (3x3)
+          </label>
+          <textarea
+            className="w-full p-2 border rounded font-mono"
+            rows={3}
+            value={matrixInput}
+            onChange={(e) => handleMatrixInput(e.target.value)}
+            placeholder="000\n000\n000"
+          />
         </div>
       </div>
       <div
