@@ -103,7 +103,7 @@ const LayoutGenerator: React.FC = () => {
     const canvas = await html2canvas(element, {
       useCORS: true,
       logging: false,
-      background: '#ffffff'
+      backgroundColor: '#ffffff'
     });
 
     // Hide the grid again
