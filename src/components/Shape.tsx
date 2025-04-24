@@ -42,7 +42,7 @@ const Shape: React.FC<ShapeProps> = ({ type, size = 50, className = '' }) => {
       case 0:
         return (
           <div
-            className={`bg-white border border-gray-300 ${className}`}
+            className={`bg-white ${className}`}
             style={baseStyle}
           />
         );

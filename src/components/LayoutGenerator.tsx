@@ -84,7 +84,7 @@ const LayoutGenerator: React.FC = () => {
                     key={item.id}
                     className="relative"
                   >
-                    <Shape type={item.type} size={78} />
+                    <Shape type={item.type} size={80} />
                   </div>
                 );
               }
