@@ -2,18 +2,12 @@
 
 import React, { useState } from 'react';
 import Shape from './Shape';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 
-interface LayoutItem {
-  id: string;
-  type: ShapeType;
-  x: number;
-  y: number;
-}
-
 const LayoutGenerator: React.FC = () => {
-  const [layout, setLayout] = useState<LayoutItem[]>([]);
   const [selectedShape, setSelectedShape] = useState<ShapeType>(0);
   const [matrixInput, setMatrixInput] = useState<string>('000\n000\n000');
   const [matrices, setMatrices] = useState<string[]>(['000\n000\n000']);
@@ -21,80 +15,64 @@ const LayoutGenerator: React.FC = () => {
 
   const handleMatrixInput = (input: string) => {
     setMatrixInput(input);
-    const rows = input.trim().split('\n');
-    const newLayout: LayoutItem[] = [];
-    
-    rows.forEach((row, y) => {
-      row.split('').forEach((cell, x) => {
-        const type = parseInt(cell) as ShapeType;
-        if (!isNaN(type) && type >= 0 && type <= 5) {
-          newLayout.push({
-            id: `${x}-${y}`,
-            type,
-            x,
-            y,
-          });
-        }
-      });
-    });
-    
-    setLayout(newLayout);
   };
 
   const handleAddMatrix = () => {
-    setMatrices([...matrices, matrixInput]);
+    if (matrices.length < 6) {
+      setMatrices([...matrices, matrixInput]);
+    }
   };
 
   const handleRemoveMatrix = (index: number) => {
     setMatrices(matrices.filter((_, i) => i !== index));
   };
 
-  const handleAddShape = (x: number, y: number) => {
-    const newShape: LayoutItem = {
-      id: Date.now().toString(),
-      type: selectedShape,
-      x,
-      y,
-    };
-    setLayout([...layout.filter(item => !(item.x === x && item.y === y)), newShape]);
-    
-    // Update matrix input
-    const rows = matrixInput.split('\n');
-    const newRows = [...rows];
-    const cells = newRows[y].split('');
-    cells[x] = selectedShape.toString();
-    newRows[y] = cells.join('');
-    setMatrixInput(newRows.join('\n'));
-  };
-
-  const renderGrid = () => {
+  const renderGrid = (matrix: string) => {
     const grid = [];
+    const rows = matrix.trim().split('\n');
+    
     for (let y = 0; y < gridSize; y++) {
       for (let x = 0; x < gridSize; x++) {
+        const cellValue = rows[y]?.[x] || '0';
+        const type = parseInt(cellValue) as ShapeType;
+        
         grid.push(
           <div
             key={`${x}-${y}`}
-            className="w-20 h-20 flex items-center justify-center cursor-pointer hover:bg-gray-100"
-            onClick={() => handleAddShape(x, y)}
+            className="w-20 h-20 flex items-center justify-center"
           >
-            {layout.map(item => {
-              if (item.x === x && item.y === y) {
-                return (
-                  <div
-                    key={item.id}
-                    className="relative"
-                  >
-                    <Shape type={item.type} size={80} />
-                  </div>
-                );
-              }
-              return null;
-            })}
+            <div className="relative">
+              <Shape type={type} size={80} />
+            </div>
           </div>
         );
       }
     }
     return grid;
+  };
+
+  const handleExportPDF = async () => {
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const element = document.getElementById('layouts-grid');
+    if (!element) return;
+
+    const canvas = await html2canvas(element, {
+      useCORS: true,
+      logging: false,
+      background: '#ffffff'
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const imgWidth = 210; // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    pdf.save('kohs-layouts.pdf');
   };
 
   return (
@@ -166,9 +144,18 @@ const LayoutGenerator: React.FC = () => {
             <button
               className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
               onClick={handleAddMatrix}
+              disabled={matrices.length >= 6}
             >
-              Add Matrix
+              Add Matrix ({matrices.length}/6)
             </button>
+            {matrices.length > 0 && (
+              <button
+                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                onClick={handleExportPDF}
+              >
+                Save as PDF
+              </button>
+            )}
           </div>
           <p className="text-sm text-gray-700 mt-1">
             Each row represents a horizontal line of the grid from top to bottom
@@ -176,28 +163,22 @@ const LayoutGenerator: React.FC = () => {
         </div>
       </div>
       <div className="grid gap-0 border border-gray-300" style={{ gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
-        {renderGrid()}
+        {renderGrid(matrixInput)}
       </div>
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4 text-gray-900">Saved Matrices</h2>
-        <div className="space-y-4">
-          {matrices.map((matrix, index) => (
-            <div key={index} className="flex items-start gap-4">
-              <textarea
-                className="w-full p-2 border rounded font-mono text-gray-900"
-                rows={3}
-                value={matrix}
-                readOnly
-              />
-              <button
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                onClick={() => handleRemoveMatrix(index)}
-              >
-                Remove
-              </button>
+      <div id="layouts-grid" className="mt-8 grid grid-cols-3 gap-4">
+        {matrices.map((matrix, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <div className="grid gap-0 border border-gray-300 mb-2" style={{ gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
+              {renderGrid(matrix)}
             </div>
-          ))}
-        </div>
+            <button
+              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              onClick={() => handleRemoveMatrix(index)}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
