@@ -70,14 +70,20 @@ const LayoutGenerator: React.FC = () => {
   };
 
   const handleExportPDF = async () => {
-    const element = document.getElementById('layouts-grid');
+    const element = document.getElementById('export-grid');
     if (!element) return;
 
+    // Temporarily show the grid
+    element.style.display = 'block';
+    
     const canvas = await html2canvas(element, {
       useCORS: true,
       logging: false,
       background: '#ffffff'
     });
+
+    // Hide the grid again
+    element.style.display = 'none';
 
     // Create a link element
     const link = document.createElement('a');
@@ -235,6 +241,19 @@ const LayoutGenerator: React.FC = () => {
       <div style={{ display: 'grid', gap: 0, border: '1px solid #e5e7eb', gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
         {renderGrid(matrixInput)}
       </div>
+      {/* Hidden export grid */}
+      <div id="export-grid" style={{ display: 'none' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
+          {matrices.map((matrix, index) => (
+            <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ display: 'grid', gap: 0, border: '1px solid #e5e7eb', gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
+                {renderGrid(matrix)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Visible grid with remove buttons */}
       <div id="layouts-grid" style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
         {matrices.map((matrix, index) => (
           <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
