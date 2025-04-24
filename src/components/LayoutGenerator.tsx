@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import Shape from './Shape';
 
-type ShapeType = 'white' | 'black' | 'triangle';
+type ShapeType = 'white' | 'black' | 
+  'white-black-top-left' | 'white-black-top-right' | 
+  'white-black-bottom-left' | 'white-black-bottom-right';
 
 interface LayoutItem {
   id: string;
@@ -15,7 +17,7 @@ interface LayoutItem {
 const LayoutGenerator: React.FC = () => {
   const [layout, setLayout] = useState<LayoutItem[]>([]);
   const [selectedShape, setSelectedShape] = useState<ShapeType>('white');
-  const [gridSize, setGridSize] = useState(8);
+  const gridSize = 3; // 3x3 grid
 
   const handleAddShape = (x: number, y: number) => {
     const newShape: LayoutItem = {
@@ -38,7 +40,7 @@ const LayoutGenerator: React.FC = () => {
         grid.push(
           <div
             key={`${i}-${j}`}
-            className="border border-gray-200 w-12 h-12 flex items-center justify-center cursor-pointer hover:bg-gray-100"
+            className="border border-gray-200 w-20 h-20 flex items-center justify-center cursor-pointer hover:bg-gray-100"
             onClick={() => handleAddShape(i, j)}
           >
             {layout.map(item => {
@@ -52,7 +54,7 @@ const LayoutGenerator: React.FC = () => {
                       handleRemoveShape(item.id);
                     }}
                   >
-                    <Shape type={item.type} size={40} />
+                    <Shape type={item.type} size={70} />
                   </div>
                 );
               }
@@ -68,10 +70,10 @@ const LayoutGenerator: React.FC = () => {
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-4">Kohs Layout Generator</h1>
-        <div className="flex gap-4 mb-4">
+        <h1 className="text-2xl font-bold mb-4">Kohs Block Design Generator</h1>
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
-            className={`px-4 py-2 rounded ${
+            className={`px-3 py-1 rounded ${
               selectedShape === 'white' ? 'bg-gray-200' : 'bg-white'
             }`}
             onClick={() => setSelectedShape('white')}
@@ -79,7 +81,7 @@ const LayoutGenerator: React.FC = () => {
             White
           </button>
           <button
-            className={`px-4 py-2 rounded ${
+            className={`px-3 py-1 rounded ${
               selectedShape === 'black' ? 'bg-gray-200' : 'bg-white'
             }`}
             onClick={() => setSelectedShape('black')}
@@ -87,19 +89,43 @@ const LayoutGenerator: React.FC = () => {
             Black
           </button>
           <button
-            className={`px-4 py-2 rounded ${
-              selectedShape === 'triangle' ? 'bg-gray-200' : 'bg-white'
+            className={`px-3 py-1 rounded ${
+              selectedShape === 'white-black-top-left' ? 'bg-gray-200' : 'bg-white'
             }`}
-            onClick={() => setSelectedShape('triangle')}
+            onClick={() => setSelectedShape('white-black-top-left')}
           >
-            Triangle
+            W/B TL
+          </button>
+          <button
+            className={`px-3 py-1 rounded ${
+              selectedShape === 'white-black-top-right' ? 'bg-gray-200' : 'bg-white'
+            }`}
+            onClick={() => setSelectedShape('white-black-top-right')}
+          >
+            W/B TR
+          </button>
+          <button
+            className={`px-3 py-1 rounded ${
+              selectedShape === 'white-black-bottom-left' ? 'bg-gray-200' : 'bg-white'
+            }`}
+            onClick={() => setSelectedShape('white-black-bottom-left')}
+          >
+            W/B BL
+          </button>
+          <button
+            className={`px-3 py-1 rounded ${
+              selectedShape === 'white-black-bottom-right' ? 'bg-gray-200' : 'bg-white'
+            }`}
+            onClick={() => setSelectedShape('white-black-bottom-right')}
+          >
+            W/B BR
           </button>
         </div>
       </div>
       <div
         className="grid gap-0 border border-gray-300"
         style={{
-          gridTemplateColumns: `repeat(${gridSize}, 3rem)`,
+          gridTemplateColumns: `repeat(${gridSize}, 5rem)`,
         }}
       >
         {renderGrid()}
