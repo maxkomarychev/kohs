@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Shape from './Shape';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -52,12 +51,6 @@ const LayoutGenerator: React.FC = () => {
   };
 
   const handleExportPDF = async () => {
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
     const element = document.getElementById('layouts-grid');
     if (!element) return;
 
@@ -67,12 +60,11 @@ const LayoutGenerator: React.FC = () => {
       background: '#ffffff'
     });
 
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210; // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-    pdf.save('kohs-layouts.pdf');
+    // Create a link element
+    const link = document.createElement('a');
+    link.download = 'kohs-layouts.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
   };
 
   return (
@@ -201,7 +193,7 @@ const LayoutGenerator: React.FC = () => {
                 }}
                 onClick={handleExportPDF}
               >
-                Save as PDF
+                Save as PNG
               </button>
             )}
           </div>

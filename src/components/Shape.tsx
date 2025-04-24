@@ -13,59 +13,49 @@ type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 interface ShapeProps {
   type: ShapeType;
   size?: number;
-  className?: string;
 }
 
-const Shape: React.FC<ShapeProps> = ({ type, size = 50, className = '' }) => {
+const Shape: React.FC<ShapeProps> = ({ type, size = 50 }) => {
   const baseStyle = {
     width: `${size}px`,
     height: `${size}px`,
+    position: 'relative' as const,
+    backgroundColor: 'white',
+    border: '1px solid #e5e7eb'
   };
 
-  const renderDiagonal = (baseColor: string, triangleColor: string, clipPath: string) => {
+  const renderDiagonal = (path: string) => {
     return (
-      <div
-        className={`relative ${className}`}
-        style={baseStyle}
-      >
-        <div style={{ position: 'absolute', inset: 0, backgroundColor: baseColor }} />
-        <div 
-          style={{ position: 'absolute', inset: 0, backgroundColor: triangleColor, clipPath }}
-        />
+      <div style={baseStyle}>
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        >
+          <path d={path} fill="black" />
+        </svg>
       </div>
     );
   };
 
-  const renderShape = () => {
-    switch (type) {
-      case 0:
-        return (
-          <div
-            className={className}
-            style={{ ...baseStyle, backgroundColor: 'white' }}
-          />
-        );
-      case 5:
-        return (
-          <div
-            className={className}
-            style={{ ...baseStyle, backgroundColor: 'black' }}
-          />
-        );
-      case 1:
-        return renderDiagonal('white', 'black', 'polygon(0% 0%, 100% 0%, 0% 100%)');
-      case 2:
-        return renderDiagonal('white', 'black', 'polygon(0% 0%, 100% 0%, 100% 100%)');
-      case 3:
-        return renderDiagonal('white', 'black', 'polygon(100% 0%, 0% 100%, 100% 100%)');
-      case 4:
-        return renderDiagonal('white', 'black', 'polygon(0% 0%, 0% 100%, 100% 100%)');
-      default:
-        return null;
-    }
-  };
-
-  return renderShape();
+  switch (type) {
+    case 0:
+      return <div style={baseStyle} />;
+    case 5:
+      return <div style={{ ...baseStyle, backgroundColor: 'black' }} />;
+    case 1:
+      return renderDiagonal('M 0,0 L 100,0 L 0,100 Z');
+    case 2:
+      return renderDiagonal('M 0,0 L 100,0 L 100,100 Z');
+    case 3:
+      return renderDiagonal('M 100,0 L 0,100 L 100,100 Z');
+    case 4:
+      return renderDiagonal('M 0,0 L 0,100 L 100,100 Z');
+    default:
+      return null;
+  }
 };
 
 export default Shape; 
