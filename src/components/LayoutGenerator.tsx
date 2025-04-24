@@ -9,7 +9,7 @@ type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 const LayoutGenerator: React.FC = () => {
   const [selectedShape, setSelectedShape] = useState<ShapeType>(0);
   const [matrixInput, setMatrixInput] = useState<string>('000\n000\n000');
-  const [matrices, setMatrices] = useState<string[]>(['000\n000\n000']);
+  const [matrices, setMatrices] = useState<string[]>([]);
   const gridSize = 3;
 
   const handleMatrixInput = (input: string) => {
@@ -19,6 +19,7 @@ const LayoutGenerator: React.FC = () => {
   const handleAddMatrix = () => {
     if (matrices.length < 6) {
       setMatrices([...matrices, matrixInput]);
+      setMatrixInput(''); // Clear the textarea completely
     }
   };
 
