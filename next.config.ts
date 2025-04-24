@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   output: 'export',
+  images: {
+    unoptimized: true,
+  },
+  // Remove basePath and assetPrefix as they're causing issues
+  trailingSlash: true,
 };
 
 export default nextConfig;
