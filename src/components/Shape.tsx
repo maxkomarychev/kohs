@@ -28,10 +28,9 @@ const Shape: React.FC<ShapeProps> = ({ type, size = 50, className = '' }) => {
         className={`relative ${className}`}
         style={baseStyle}
       >
-        <div className={`absolute inset-0 bg-${baseColor}`} />
+        <div style={{ position: 'absolute', inset: 0, backgroundColor: baseColor }} />
         <div 
-          className={`absolute inset-0 bg-${triangleColor}`} 
-          style={{ clipPath }}
+          style={{ position: 'absolute', inset: 0, backgroundColor: triangleColor, clipPath }}
         />
       </div>
     );
@@ -42,15 +41,15 @@ const Shape: React.FC<ShapeProps> = ({ type, size = 50, className = '' }) => {
       case 0:
         return (
           <div
-            className={`bg-white ${className}`}
-            style={baseStyle}
+            className={className}
+            style={{ ...baseStyle, backgroundColor: 'white' }}
           />
         );
       case 5:
         return (
           <div
-            className={`bg-black ${className}`}
-            style={baseStyle}
+            className={className}
+            style={{ ...baseStyle, backgroundColor: 'black' }}
           />
         );
       case 1:

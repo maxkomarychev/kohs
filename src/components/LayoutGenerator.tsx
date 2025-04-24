@@ -39,9 +39,9 @@ const LayoutGenerator: React.FC = () => {
         grid.push(
           <div
             key={`${x}-${y}`}
-            className="w-20 h-20 flex items-center justify-center"
+            style={{ width: '5rem', height: '5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            <div className="relative">
+            <div style={{ position: 'relative' }}>
               <Shape type={type} size={80} />
             </div>
           </div>
@@ -76,73 +76,114 @@ const LayoutGenerator: React.FC = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-4 text-gray-900">Kohs Block Design Generator</h1>
-        <div className="flex flex-wrap gap-2 mb-4">
+    <div style={{ padding: '2rem' }}>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#111827' }}>
+          Kohs Block Design Generator
+        </h1>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
           <button
-            className={`px-3 py-1 rounded ${
-              selectedShape === 0 ? 'bg-gray-200' : 'bg-white'
-            } text-gray-900`}
+            style={{
+              padding: '0.25rem 0.75rem',
+              borderRadius: '0.25rem',
+              backgroundColor: selectedShape === 0 ? '#e5e7eb' : 'white',
+              color: '#111827',
+              border: '1px solid #e5e7eb'
+            }}
             onClick={() => setSelectedShape(0)}
           >
             0 (White)
           </button>
           <button
-            className={`px-3 py-1 rounded ${
-              selectedShape === 5 ? 'bg-gray-200' : 'bg-white'
-            } text-gray-900`}
+            style={{
+              padding: '0.25rem 0.75rem',
+              borderRadius: '0.25rem',
+              backgroundColor: selectedShape === 5 ? '#e5e7eb' : 'white',
+              color: '#111827',
+              border: '1px solid #e5e7eb'
+            }}
             onClick={() => setSelectedShape(5)}
           >
             5 (Black)
           </button>
           <button
-            className={`px-3 py-1 rounded ${
-              selectedShape === 1 ? 'bg-gray-200' : 'bg-white'
-            } text-gray-900`}
+            style={{
+              padding: '0.25rem 0.75rem',
+              borderRadius: '0.25rem',
+              backgroundColor: selectedShape === 1 ? '#e5e7eb' : 'white',
+              color: '#111827',
+              border: '1px solid #e5e7eb'
+            }}
             onClick={() => setSelectedShape(1)}
           >
             1 (NW)
           </button>
           <button
-            className={`px-3 py-1 rounded ${
-              selectedShape === 2 ? 'bg-gray-200' : 'bg-white'
-            } text-gray-900`}
+            style={{
+              padding: '0.25rem 0.75rem',
+              borderRadius: '0.25rem',
+              backgroundColor: selectedShape === 2 ? '#e5e7eb' : 'white',
+              color: '#111827',
+              border: '1px solid #e5e7eb'
+            }}
             onClick={() => setSelectedShape(2)}
           >
             2 (NE)
           </button>
           <button
-            className={`px-3 py-1 rounded ${
-              selectedShape === 3 ? 'bg-gray-200' : 'bg-white'
-            } text-gray-900`}
+            style={{
+              padding: '0.25rem 0.75rem',
+              borderRadius: '0.25rem',
+              backgroundColor: selectedShape === 3 ? '#e5e7eb' : 'white',
+              color: '#111827',
+              border: '1px solid #e5e7eb'
+            }}
             onClick={() => setSelectedShape(3)}
           >
             3 (SE)
           </button>
           <button
-            className={`px-3 py-1 rounded ${
-              selectedShape === 4 ? 'bg-gray-200' : 'bg-white'
-            } text-gray-900`}
+            style={{
+              padding: '0.25rem 0.75rem',
+              borderRadius: '0.25rem',
+              backgroundColor: selectedShape === 4 ? '#e5e7eb' : 'white',
+              color: '#111827',
+              border: '1px solid #e5e7eb'
+            }}
             onClick={() => setSelectedShape(4)}
           >
             4 (SW)
           </button>
         </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-900 mb-2">
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#111827', marginBottom: '0.5rem' }}>
             Matrix Input (3x3)
           </label>
           <textarea
-            className="w-full p-2 border rounded font-mono text-gray-900"
+            style={{
+              width: '100%',
+              padding: '0.5rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.25rem',
+              fontFamily: 'monospace',
+              color: '#111827'
+            }}
             rows={3}
             value={matrixInput}
             onChange={(e) => handleMatrixInput(e.target.value)}
             placeholder="000\n000\n000"
           />
-          <div className="flex gap-2 mt-2">
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
             <button
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              style={{
+                padding: '0.25rem 0.75rem',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                borderRadius: '0.25rem',
+                border: 'none',
+                cursor: matrices.length >= 6 ? 'not-allowed' : 'pointer',
+                opacity: matrices.length >= 6 ? 0.5 : 1
+              }}
               onClick={handleAddMatrix}
               disabled={matrices.length >= 6}
             >
@@ -150,29 +191,43 @@ const LayoutGenerator: React.FC = () => {
             </button>
             {matrices.length > 0 && (
               <button
-                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  borderRadius: '0.25rem',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
                 onClick={handleExportPDF}
               >
                 Save as PDF
               </button>
             )}
           </div>
-          <p className="text-sm text-gray-700 mt-1">
+          <p style={{ fontSize: '0.875rem', color: '#374151', marginTop: '0.25rem' }}>
             Each row represents a horizontal line of the grid from top to bottom
           </p>
         </div>
       </div>
-      <div className="grid gap-0 border border-gray-300" style={{ gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
+      <div style={{ display: 'grid', gap: 0, border: '1px solid #e5e7eb', gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
         {renderGrid(matrixInput)}
       </div>
-      <div id="layouts-grid" className="mt-8 grid grid-cols-2 gap-8">
+      <div id="layouts-grid" style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
         {matrices.map((matrix, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div className="grid gap-0 border border-gray-300 mb-2" style={{ gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
+          <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'grid', gap: 0, border: '1px solid #e5e7eb', marginBottom: '0.5rem', gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
               {renderGrid(matrix)}
             </div>
             <button
-              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              style={{
+                padding: '0.25rem 0.75rem',
+                backgroundColor: '#ef4444',
+                color: 'white',
+                borderRadius: '0.25rem',
+                border: 'none',
+                cursor: 'pointer'
+              }}
               onClick={() => handleRemoveMatrix(index)}
             >
               Remove
