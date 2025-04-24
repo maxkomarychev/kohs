@@ -21,7 +21,6 @@ const Shape: React.FC<ShapeProps> = ({ type, size = 50 }) => {
     height: `${size}px`,
     position: 'relative' as const,
     backgroundColor: 'white',
-    border: '1px solid #e5e7eb'
   };
 
   const renderDiagonal = (path: string) => {
