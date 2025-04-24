@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   },
   // Remove basePath and assetPrefix as they're causing issues
   trailingSlash: true,
+  basePath: '/kohs',
+  assetPrefix: '/kohs/',
 };
 
 export default nextConfig;
