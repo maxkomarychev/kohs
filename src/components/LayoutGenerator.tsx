@@ -51,29 +51,25 @@ const LayoutGenerator: React.FC = () => {
     
     // Update matrix input
     const rows = matrixInput.split('\n');
-    const newRows = rows.map((row, rowY) => {
-      if (rowY === y) {
-        const cells = row.split('');
-        cells[x] = selectedShape.toString();
-        return cells.join('');
-      }
-      return row;
-    });
+    const newRows = [...rows];
+    const cells = newRows[y].split('');
+    cells[x] = selectedShape.toString();
+    newRows[y] = cells.join('');
     setMatrixInput(newRows.join('\n'));
   };
 
   const renderGrid = () => {
     const grid = [];
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
         grid.push(
           <div
-            key={`${i}-${j}`}
+            key={`${x}-${y}`}
             className="border border-gray-200 w-20 h-20 flex items-center justify-center cursor-pointer hover:bg-gray-100"
-            onClick={() => handleAddShape(i, j)}
+            onClick={() => handleAddShape(x, y)}
           >
             {layout.map(item => {
-              if (item.x === i && item.y === j) {
+              if (item.x === x && item.y === y) {
                 return (
                   <div
                     key={item.id}
@@ -157,6 +153,9 @@ const LayoutGenerator: React.FC = () => {
             onChange={(e) => handleMatrixInput(e.target.value)}
             placeholder="000\n000\n000"
           />
+          <p className="text-sm text-gray-500 mt-1">
+            Each row represents a horizontal line of the grid from top to bottom
+          </p>
         </div>
       </div>
       <div
