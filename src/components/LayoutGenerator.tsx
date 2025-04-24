@@ -165,7 +165,7 @@ const LayoutGenerator: React.FC = () => {
       <div className="grid gap-0 border border-gray-300" style={{ gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
         {renderGrid(matrixInput)}
       </div>
-      <div id="layouts-grid" className="mt-8 grid grid-cols-3 gap-4">
+      <div id="layouts-grid" className="mt-8 grid grid-cols-2 gap-8">
         {matrices.map((matrix, index) => (
           <div key={index} className="flex flex-col items-center">
             <div className="grid gap-0 border border-gray-300 mb-2" style={{ gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
