@@ -7,7 +7,6 @@ import html2canvas from 'html2canvas';
 type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 
 const LayoutGenerator: React.FC = () => {
-  const [selectedShape, setSelectedShape] = useState<ShapeType>(0);
   const [matrixInput, setMatrixInput] = useState<string>('000\n000\n000');
   const [matrices, setMatrices] = useState<string[]>([]);
   const gridSize = 3;
@@ -126,80 +125,6 @@ const LayoutGenerator: React.FC = () => {
         <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#111827' }}>
           Kohs Block Design Generator
         </h1>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-          <button
-            style={{
-              padding: '0.25rem 0.75rem',
-              borderRadius: '0.25rem',
-              backgroundColor: selectedShape === 0 ? '#e5e7eb' : 'white',
-              color: '#111827',
-              border: '1px solid #e5e7eb'
-            }}
-            onClick={() => setSelectedShape(0)}
-          >
-            0 (White)
-          </button>
-          <button
-            style={{
-              padding: '0.25rem 0.75rem',
-              borderRadius: '0.25rem',
-              backgroundColor: selectedShape === 5 ? '#e5e7eb' : 'white',
-              color: '#111827',
-              border: '1px solid #e5e7eb'
-            }}
-            onClick={() => setSelectedShape(5)}
-          >
-            5 (Black)
-          </button>
-          <button
-            style={{
-              padding: '0.25rem 0.75rem',
-              borderRadius: '0.25rem',
-              backgroundColor: selectedShape === 1 ? '#e5e7eb' : 'white',
-              color: '#111827',
-              border: '1px solid #e5e7eb'
-            }}
-            onClick={() => setSelectedShape(1)}
-          >
-            1 (NW)
-          </button>
-          <button
-            style={{
-              padding: '0.25rem 0.75rem',
-              borderRadius: '0.25rem',
-              backgroundColor: selectedShape === 2 ? '#e5e7eb' : 'white',
-              color: '#111827',
-              border: '1px solid #e5e7eb'
-            }}
-            onClick={() => setSelectedShape(2)}
-          >
-            2 (NE)
-          </button>
-          <button
-            style={{
-              padding: '0.25rem 0.75rem',
-              borderRadius: '0.25rem',
-              backgroundColor: selectedShape === 3 ? '#e5e7eb' : 'white',
-              color: '#111827',
-              border: '1px solid #e5e7eb'
-            }}
-            onClick={() => setSelectedShape(3)}
-          >
-            3 (SE)
-          </button>
-          <button
-            style={{
-              padding: '0.25rem 0.75rem',
-              borderRadius: '0.25rem',
-              backgroundColor: selectedShape === 4 ? '#e5e7eb' : 'white',
-              color: '#111827',
-              border: '1px solid #e5e7eb'
-            }}
-            onClick={() => setSelectedShape(4)}
-          >
-            4 (SW)
-          </button>
-        </div>
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#111827', marginBottom: '0.5rem' }}>
             Matrix Input (3x3)
