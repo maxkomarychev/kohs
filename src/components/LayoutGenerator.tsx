@@ -9,6 +9,7 @@ type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 const LayoutGenerator: React.FC = () => {
   const [matrixInput, setMatrixInput] = useState<string>('000\n000\n000');
   const [matrices, setMatrices] = useState<string[]>([]);
+  const [lockedCells, setLockedCells] = useState<boolean[][]>(Array(3).fill(null).map(() => Array(3).fill(false)));
   const gridSize = 3;
 
   const generateRandomMatrix = (): string => {
@@ -16,7 +17,14 @@ const LayoutGenerator: React.FC = () => {
     for (let i = 0; i < gridSize; i++) {
       const row = [];
       for (let j = 0; j < gridSize; j++) {
-        row.push(Math.floor(Math.random() * 6).toString());
+        // Only randomize if cell is not locked
+        if (!lockedCells[i][j]) {
+          row.push(Math.floor(Math.random() * 6).toString());
+        } else {
+          // Keep the existing value for locked cells
+          const currentRows = matrixInput.split('\n');
+          row.push(currentRows[i]?.[j] || '0');
+        }
       }
       rows.push(row.join(''));
     }
@@ -33,6 +41,14 @@ const LayoutGenerator: React.FC = () => {
 
   const handleRandomizeCurrent = () => {
     setMatrixInput(generateRandomMatrix());
+  };
+
+  const handleResetLocks = () => {
+    setLockedCells(Array(3).fill(null).map(() => Array(3).fill(false)));
+  };
+
+  const handleResetMatrix = () => {
+    setMatrixInput('000\n000\n000');
   };
 
   const handleMatrixInput = (input: string) => {
@@ -70,6 +86,12 @@ const LayoutGenerator: React.FC = () => {
     setMatrixInput(newRows.join('\n'));
   };
 
+  const handleLockCell = (row: number, col: number) => {
+    const newLockedCells = [...lockedCells];
+    newLockedCells[row][col] = !newLockedCells[row][col];
+    setLockedCells(newLockedCells);
+  };
+
   const renderGrid = (matrix: string) => {
     const grid = [];
     const rows = matrix.trim().split('\n');
@@ -82,13 +104,51 @@ const LayoutGenerator: React.FC = () => {
         grid.push(
           <div
             key={`${x}-${y}`}
-            style={{ width: '5rem', height: '5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ 
+              width: '5rem', 
+              height: '5rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center'
+            }}
             onClick={() => handleCellClick(y, x)}
             className="cursor-pointer hover:bg-gray-100"
           >
             <div style={{ position: 'relative' }}>
               <Shape type={type} size={80} />
             </div>
+          </div>
+        );
+      }
+    }
+    return grid;
+  };
+
+  const renderLockGrid = () => {
+    const grid = [];
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        grid.push(
+          <div
+            key={`lock-${x}-${y}`}
+            style={{ 
+              width: '5rem', 
+              height: '2rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center'
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={lockedCells[y][x]}
+              onChange={() => handleLockCell(y, x)}
+              style={{
+                width: '1rem',
+                height: '1rem',
+                cursor: 'pointer'
+              }}
+            />
           </div>
         );
       }
@@ -125,84 +185,130 @@ const LayoutGenerator: React.FC = () => {
         <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#111827' }}>
           Kohs Block Design Generator
         </h1>
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#111827', marginBottom: '0.5rem' }}>
-            Matrix Input (3x3)
-          </label>
-          <textarea
-            style={{
-              width: '100%',
+        <div style={{ marginBottom: '1rem', display: 'flex', gap: '2rem' }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#111827', marginBottom: '0.5rem' }}>
+              Matrix Input (3x3)
+            </label>
+            <textarea
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.25rem',
+                fontFamily: 'monospace',
+                color: '#111827'
+              }}
+              rows={3}
+              value={matrixInput}
+              onChange={(e) => handleMatrixInput(e.target.value)}
+              placeholder="000\n000\n000"
+            />
+            <button
+              style={{
+                padding: '0.25rem 0.75rem',
+                backgroundColor: '#f59e0b',
+                color: 'white',
+                borderRadius: '0.25rem',
+                border: 'none',
+                cursor: 'pointer',
+                marginTop: '0.5rem'
+              }}
+              onClick={handleResetMatrix}
+            >
+              Reset Matrix
+            </button>
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#111827', marginBottom: '0.5rem' }}>
+              Lock Cells
+            </label>
+            <div style={{ 
+              display: 'grid', 
+              gap: '0.5rem', 
+              gridTemplateColumns: 'repeat(3, 1fr)',
               padding: '0.5rem',
               border: '1px solid #e5e7eb',
               borderRadius: '0.25rem',
-              fontFamily: 'monospace',
-              color: '#111827'
-            }}
-            rows={3}
-            value={matrixInput}
-            onChange={(e) => handleMatrixInput(e.target.value)}
-            placeholder="000\n000\n000"
-          />
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+              backgroundColor: '#f9fafb'
+            }}>
+              {renderLockGrid()}
+            </div>
             <button
               style={{
                 padding: '0.25rem 0.75rem',
-                backgroundColor: '#3b82f6',
+                backgroundColor: '#f59e0b',
                 color: 'white',
                 borderRadius: '0.25rem',
                 border: 'none',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                marginTop: '0.5rem'
               }}
-              onClick={handleAddMatrix}
+              onClick={handleResetLocks}
             >
-              Add Matrix ({matrices.length})
+              Reset Locks
             </button>
-            <button
-              style={{
-                padding: '0.25rem 0.75rem',
-                backgroundColor: '#8b5cf6',
-                color: 'white',
-                borderRadius: '0.25rem',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-              onClick={handleGenerateRandom}
-            >
-              Generate Random (6)
-            </button>
-            <button
-              style={{
-                padding: '0.25rem 0.75rem',
-                backgroundColor: '#8b5cf6',
-                color: 'white',
-                borderRadius: '0.25rem',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-              onClick={handleRandomizeCurrent}
-            >
-              Randomize Current
-            </button>
-            {matrices.length > 0 && (
-              <button
-                style={{
-                  padding: '0.25rem 0.75rem',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  borderRadius: '0.25rem',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-                onClick={handleExportPDF}
-              >
-                Save as PNG
-              </button>
-            )}
           </div>
-          <p style={{ fontSize: '0.875rem', color: '#374151', marginTop: '0.25rem' }}>
-            Each row represents a horizontal line of the grid from top to bottom
-          </p>
         </div>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+          <button
+            style={{
+              padding: '0.25rem 0.75rem',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              borderRadius: '0.25rem',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            onClick={handleAddMatrix}
+          >
+            Add Matrix ({matrices.length})
+          </button>
+          <button
+            style={{
+              padding: '0.25rem 0.75rem',
+              backgroundColor: '#8b5cf6',
+              color: 'white',
+              borderRadius: '0.25rem',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            onClick={handleGenerateRandom}
+          >
+            Generate Random (6)
+          </button>
+          <button
+            style={{
+              padding: '0.25rem 0.75rem',
+              backgroundColor: '#8b5cf6',
+              color: 'white',
+              borderRadius: '0.25rem',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            onClick={handleRandomizeCurrent}
+          >
+            Randomize Current
+          </button>
+          {matrices.length > 0 && (
+            <button
+              style={{
+                padding: '0.25rem 0.75rem',
+                backgroundColor: '#10b981',
+                color: 'white',
+                borderRadius: '0.25rem',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onClick={handleExportPDF}
+            >
+              Save as PNG
+            </button>
+          )}
+        </div>
+        <p style={{ fontSize: '0.875rem', color: '#374151', marginTop: '0.25rem' }}>
+          Each row represents a horizontal line of the grid from top to bottom
+        </p>
       </div>
       <div style={{ display: 'grid', gap: 0, border: '1px solid #e5e7eb', gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
         {renderGrid(matrixInput)}
