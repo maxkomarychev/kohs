@@ -32,6 +32,10 @@ const LayoutGenerator: React.FC = () => {
     setMatrices(newMatrices);
   };
 
+  const handleRandomizeCurrent = () => {
+    setMatrixInput(generateRandomMatrix());
+  };
+
   const handleMatrixInput = (input: string) => {
     setMatrixInput(input);
   };
@@ -240,6 +244,19 @@ const LayoutGenerator: React.FC = () => {
               onClick={handleGenerateRandom}
             >
               Generate Random (25)
+            </button>
+            <button
+              style={{
+                padding: '0.25rem 0.75rem',
+                backgroundColor: '#8b5cf6',
+                color: 'white',
+                borderRadius: '0.25rem',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onClick={handleRandomizeCurrent}
+            >
+              Randomize Current
             </button>
             {matrices.length > 0 && (
               <button
