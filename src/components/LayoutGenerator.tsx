@@ -10,6 +10,7 @@ const LayoutGenerator: React.FC = () => {
   const [matrixInput, setMatrixInput] = useState<string>('000\n000\n000');
   const [matrices, setMatrices] = useState<string[]>([]);
   const [lockedCells, setLockedCells] = useState<boolean[][]>(Array(3).fill(null).map(() => Array(3).fill(true)));
+  const [syncMode, setSyncMode] = useState<boolean>(false);
   const gridSize = 3;
 
   const generateRandomMatrix = (): string => {
@@ -91,6 +92,18 @@ const LayoutGenerator: React.FC = () => {
     const currentValue = parseInt(newRows[row][col]) || 0;
     const newValue = ((currentValue + 1) % 6).toString();
     newRows[row] = newRows[row].substring(0, col) + newValue + newRows[row].substring(col + 1);
+
+    if (syncMode && lockedCells[row][col]) {
+      // If sync mode is enabled and the clicked cell is selected, update all other selected cells
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          if (lockedCells[y][x] && !(y === row && x === col)) {
+            newRows[y] = newRows[y].substring(0, x) + newValue + newRows[y].substring(x + 1);
+          }
+        }
+      }
+    }
+
     setMatrixInput(newRows.join('\n'));
   };
 
@@ -348,8 +361,89 @@ const LayoutGenerator: React.FC = () => {
           Each row represents a horizontal line of the grid from top to bottom
         </p>
       </div>
-      <div style={{ display: 'grid', gap: 0, border: '1px solid #e5e7eb', gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
-        {renderGrid(matrixInput)}
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <input
+            type="checkbox"
+            checked={syncMode}
+            onChange={(e) => setSyncMode(e.target.checked)}
+            style={{
+              width: '1rem',
+              height: '1rem',
+              cursor: 'pointer'
+            }}
+          />
+          <span style={{ fontSize: '0.875rem', color: '#374151' }}>
+            Sync selected cells
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          <div>
+            <div style={{ display: 'grid', gap: 0, border: '1px solid #e5e7eb', gridTemplateColumns: `repeat(${gridSize}, 5rem)` }}>
+              {renderGrid(matrixInput)}
+            </div>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#111827', marginBottom: '0.5rem' }}>
+              Select Cells to Randomize
+            </label>
+            <div style={{ 
+              display: 'grid', 
+              gap: '0.5rem', 
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              padding: '0.5rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '0.25rem',
+              backgroundColor: '#f9fafb'
+            }}>
+              {renderLockGrid()}
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+              <button
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  borderRadius: '0.25rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flex: 1
+                }}
+                onClick={handleResetLocks}
+              >
+                Select All
+              </button>
+              <button
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  borderRadius: '0.25rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flex: 1
+                }}
+                onClick={handleDeselectAll}
+              >
+                Deselect All
+              </button>
+              <button
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  borderRadius: '0.25rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flex: 1
+                }}
+                onClick={handleInvertSelection}
+              >
+                Invert Selection
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       {/* Hidden export grid */}
       <div id="export-grid" style={{ display: 'none' }}>
