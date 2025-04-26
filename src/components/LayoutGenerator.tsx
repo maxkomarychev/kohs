@@ -26,7 +26,7 @@ const LayoutGenerator: React.FC = () => {
 
   const handleGenerateRandom = () => {
     const newMatrices: string[] = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 6; i++) {
       newMatrices.push(generateRandomMatrix());
     }
     setMatrices(newMatrices);
@@ -243,7 +243,7 @@ const LayoutGenerator: React.FC = () => {
               }}
               onClick={handleGenerateRandom}
             >
-              Generate Random (25)
+              Generate Random (6)
             </button>
             <button
               style={{
