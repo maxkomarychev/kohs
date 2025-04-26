@@ -9,7 +9,7 @@ type ShapeType = 0 | 1 | 2 | 3 | 4 | 5;
 const LayoutGenerator: React.FC = () => {
   const [matrixInput, setMatrixInput] = useState<string>('000\n000\n000');
   const [matrices, setMatrices] = useState<string[]>([]);
-  const [lockedCells, setLockedCells] = useState<boolean[][]>(Array(3).fill(null).map(() => Array(3).fill(false)));
+  const [lockedCells, setLockedCells] = useState<boolean[][]>(Array(3).fill(null).map(() => Array(3).fill(true)));
   const gridSize = 3;
 
   const generateRandomMatrix = (): string => {
@@ -17,8 +17,8 @@ const LayoutGenerator: React.FC = () => {
     for (let i = 0; i < gridSize; i++) {
       const row = [];
       for (let j = 0; j < gridSize; j++) {
-        // Only randomize if cell is not locked
-        if (!lockedCells[i][j]) {
+        // Only randomize if cell is selected (not locked)
+        if (lockedCells[i][j]) {
           row.push(Math.floor(Math.random() * 6).toString());
         } else {
           // Keep the existing value for locked cells
@@ -44,7 +44,15 @@ const LayoutGenerator: React.FC = () => {
   };
 
   const handleResetLocks = () => {
+    setLockedCells(Array(3).fill(null).map(() => Array(3).fill(true)));
+  };
+
+  const handleDeselectAll = () => {
     setLockedCells(Array(3).fill(null).map(() => Array(3).fill(false)));
+  };
+
+  const handleInvertSelection = () => {
+    setLockedCells(lockedCells.map(row => row.map(cell => !cell)));
   };
 
   const handleResetMatrix = () => {
@@ -221,7 +229,7 @@ const LayoutGenerator: React.FC = () => {
           </div>
           <div style={{ flex: 1 }}>
             <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#111827', marginBottom: '0.5rem' }}>
-              Lock Cells
+              Select Cells to Randomize
             </label>
             <div style={{ 
               display: 'grid', 
@@ -234,20 +242,50 @@ const LayoutGenerator: React.FC = () => {
             }}>
               {renderLockGrid()}
             </div>
-            <button
-              style={{
-                padding: '0.25rem 0.75rem',
-                backgroundColor: '#f59e0b',
-                color: 'white',
-                borderRadius: '0.25rem',
-                border: 'none',
-                cursor: 'pointer',
-                marginTop: '0.5rem'
-              }}
-              onClick={handleResetLocks}
-            >
-              Reset Locks
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+              <button
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  borderRadius: '0.25rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flex: 1
+                }}
+                onClick={handleResetLocks}
+              >
+                Select All
+              </button>
+              <button
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  borderRadius: '0.25rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flex: 1
+                }}
+                onClick={handleDeselectAll}
+              >
+                Deselect All
+              </button>
+              <button
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  borderRadius: '0.25rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flex: 1
+                }}
+                onClick={handleInvertSelection}
+              >
+                Invert Selection
+              </button>
+            </div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
